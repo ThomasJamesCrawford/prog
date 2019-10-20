@@ -12,11 +12,8 @@
 #include "mpi.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream>
 #include <time.h>
 #include <string.h>
-
-using namespace std;
 
 #define MASTER 0 /* taskid of first task */
 #define FROM_MASTER 1 /* setting a message type */
@@ -39,7 +36,7 @@ int main(int argc, char* argv[])
 		mtype, /* message type */
 		rows, /* rows for each worker */
 		averow, extra, offset, /* used to determine rows sent to each worker */
-		rc, v, /* misc */
+		rc, v, i, j, /* misc */
 		** graph, /* input graph[][] */
 		** distance; /* output distances[][]*/
 
@@ -109,11 +106,11 @@ int main(int argc, char* argv[])
 
 		/* Master does last portion */
 		printf("Performing %d rows on master offset=%d\n", rows, offset);
-		for (int i = 0; i < averow; i++)
+		for (i = 0; i < averow; i++)
 		{
 			int* distances = dijkstra(graph, offset + i, v);
 
-			for (int j = 0; j < v; j++)
+			for (j = 0; j < v; j++)
 			{
 				distance[offset + i][j] = distances[j];
 			}
@@ -123,7 +120,7 @@ int main(int argc, char* argv[])
 
 		/* Receive results from worker tasks */
 		mtype = FROM_WORKER;
-		for (int i = 1; i < numworkers; i++)
+		for (i = 1; i < numworkers; i++)
 		{
 			source = i;
 
@@ -143,10 +140,10 @@ int main(int argc, char* argv[])
 		/* Print results */
 		printf("******************************************************\n");
 		printf("Result Matrix:\n");
-		for (int i = 0; i < v; i++)
+		for (i = 0; i < v; i++)
 		{
 			printf("\n");
-			for (int j = 0; j < v; j++)
+			for (j = 0; j < v; j++)
 				printf("%d ", distance[i][j]);
 		}
 
@@ -193,12 +190,12 @@ int main(int argc, char* argv[])
 		int** results = allocArr(rows, v);
 
 		// do work
-		for (int i = 0; i < rows; i++)
+		for (i = 0; i < rows; i++)
 		{
 			int* distances = dijkstra(graph, offset + i, v);
 
 			// read result into sequentially allocated array
-			for (int j = 0; j < v; j++)
+			for (j = 0; j < v; j++)
 			{
 				results[i][j] = distances[j];
 			}
@@ -233,7 +230,8 @@ int getMin(int* dist, int* visited, int v) {
 	int index = 0;
 	int min = INT_MAX;
 
-	for (int i = 0; i < v; i++) {
+	int i;
+	for (i = 0; i < v; i++) {
 		if (visited[i] == 0 && dist[i] <= min) {
 			min = dist[i];
 			index = i;
@@ -254,7 +252,8 @@ int* dijkstra(int** graph, int start, int v) {
 	dist = (int *)malloc(sizeof(int) * v);
 	visited = (int*)malloc(sizeof(int) * v);
 
-	for (int i = 0; i < v; i++) {
+	int i;
+	for (i = 0; i < v; i++) {
 		dist[i] = INT_MAX;
 		visited[i] = 0;
 	}
@@ -285,7 +284,9 @@ int* dijkstra(int** graph, int start, int v) {
 int** allocArr(int rows, int cols) {
 	int* data = (int*)malloc(rows * cols * sizeof(int));
 	int** array = (int**)malloc(rows * sizeof(int*));
-	for (int i = 0; i < rows; i++)
+
+	int i;
+	for (i = 0; i < rows; i++)
 		array[i] = &(data[cols * i]);
 
 	return array;
@@ -320,9 +321,10 @@ int** readGraph(char* filename, int* v)
 
 	graph = allocArr(size, size);
 
-	for (int i = 0; i < size; i++)
+	int i, j;
+	for (i = 0; i < size; i++)
 	{
-		for (int j = 0; j < size; j++)
+		for (j = 0; j < size; j++)
 		{
 			fread(&graph[i][j], sizeof(int), 1, f);
 		}
