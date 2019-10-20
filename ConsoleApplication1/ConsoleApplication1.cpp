@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 		exit(1);
 	}
 
-	/* master task doesn't do any work */
+	/* master task DOES do work */
 	numworkers = numtasks; //-1;
 
 	/**************************** master task ************************************/
@@ -138,18 +138,6 @@ int main(int argc, char* argv[])
 			MPI_Recv(&distance[offset][0], rows * v, MPI_INT,
 				source, mtype, MPI_COMM_WORLD, &status);
 		}
-
-		/* Print results */
-		printf("******************************************************\n");
-		printf("Result Matrix:\n");
-		for (i = 0; i < v; i++)
-		{
-			printf("\n");
-			for (j = 0; j < v; j++)
-				printf("%d ", distance[i][j]);
-		}
-
-		printf("\n******************************************************\n");
 
 		end = clock();
 		double time = (double)((double)(end - begin) / CLOCKS_PER_SEC);
