@@ -19,6 +19,8 @@
 #define FROM_MASTER 1 /* setting a message type */
 #define FROM_WORKER 2 /* setting a message type */
 
+#define INT_MAX 2147483647
+
 void freeArr(int** arr);
 int** allocArr(int rows, int cols);
 int** readGraph(char* filename, int* v);
@@ -260,11 +262,12 @@ int* dijkstra(int** graph, int start, int v) {
 
 	dist[start] = 0;
 
-	for (int x = 0; x < v - 1; x++) {
+	int x, y;
+	for (x = 0; x < v - 1; x++) {
 		int u = getMin(dist, visited, v);
 		visited[u] = 1;
 
-		for (int y = 0; y < v; y++) {
+		for (y = 0; y < v; y++) {
 			if (visited[y] != 1 &&
 				graph[u][y] > 0 &&
 				dist[u] != INT_MAX &&
