@@ -342,9 +342,24 @@ int** readGraph(char* filename, int* v)
 void writeToFile(int** graph, char* filename, int size)
 {
 	int len = strlen(filename);
-	char* newFilename = (char*)malloc(sizeof(filename) + sizeof(char));
-	memcpy(newFilename, filename, len - 2);
-	strcat(newFilename, "out\0");
+	char newFilename[256];
+
+	if (len > 256)
+	{
+		printf("Filename over 256 characters : %s\n", filename);
+		printf("Exiting...\n");
+		MPI_Abort(MPI_COMM_WORLD, 0);
+		exit(1);
+	}
+
+	strcpy(newFilename, filename);
+
+	newFilename[len - 1 - 1] = 'o';
+	newFilename[len - 1] = 'u';
+	newFilename[len] = 't';
+	newFilename[len + 1] = '\0';
+
+	printf("%s\n", newFilename);
 
 	FILE* f;
 	f = fopen(newFilename, "wb+");
