@@ -45,6 +45,15 @@ int main(int argc, char* argv[])
 	MPI_Status status;
 
 	rc = MPI_Init(&argc, &argv);
+
+	// must have at least 1 additional arg
+	if (argc < 2)
+	{
+		printf("No input file given.");
+		MPI_Abort(MPI_COMM_WORLD, 0);
+		exit(1);
+	}
+
 	MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
 	MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 
@@ -103,7 +112,7 @@ int main(int argc, char* argv[])
 		}
 
 		/* Master does last portion */
-		printf("Performing %d rows on master offset=%d\n", rows, offset);
+		printf("Performing %d rows on master offset=%d\n", averow, offset);
 		for (i = 0; i < averow; i++)
 		{
 			int* distances = dijkstra(graph, offset + i, v);
