@@ -138,12 +138,13 @@ int main(int argc, char* argv[])
 		// dont wait for workers who got sent 0 rows
 		if (v < numworkers)
 		{
+			printf("Not waiting for %d workers\n", numworkers-v);
 			numworkers = v;
 		}
 
 		/* Receive results from worker tasks */
 		mtype = FROM_WORKER;
-		for (i = 1; i < numworkers; i++)
+		for (i = 1; i <= numworkers; i++)
 		{
 			source = i;
 
@@ -158,6 +159,8 @@ int main(int argc, char* argv[])
 			/* Receive distances result of work and populate distances */
 			MPI_Recv(&distance[offset][0], rows * v, MPI_INT,
 				source, mtype, MPI_COMM_WORLD, &status);
+
+			printf("Received %d rows from task %d\n", rows, source);
 		}
 
 		end = clock();
