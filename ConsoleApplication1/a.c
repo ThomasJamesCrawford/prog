@@ -98,9 +98,12 @@ int main(int argc, char* argv[])
 			MPI_Send(&rows, 1, MPI_INT, dest,
 				mtype, MPI_COMM_WORLD);
 
-			/* Send graph */
-			MPI_Send(&graph[0][0], v * v, MPI_INT,
-				dest, mtype, MPI_COMM_WORLD);
+			if (rows > 0) // slave will die when it gets 0 rows
+			{
+				/* Send graph */
+				MPI_Send(&graph[0][0], v * v, MPI_INT,
+					dest, mtype, MPI_COMM_WORLD);
+			}
 
 			offset = offset + rows;
 		}
