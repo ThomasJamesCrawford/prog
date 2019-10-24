@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
 		}
 		else 
 		{
-			numworkers = numtasks; // master does work
+			numworkers = 0; // master does work
 		}
 
 		/* Calculate work required for each worker */
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 		*  Each row of the graph is equivalent to an iteration of dijkstras with row index as source
 		*/
 		mtype = FROM_MASTER;
-		for (dest = 1; dest < numworkers; dest++)
+		for (dest = 1; dest <= numworkers; dest++)
 		{
 			rows = (dest <= extra) ? averow + 1 : averow;
 
@@ -118,18 +118,21 @@ int main(int argc, char* argv[])
 			offset = offset + rows;
 		}
 
-		/* Master does last portion */
-		printf("Performing %d rows on master offset=%d\n", averow, offset);
-		for (i = 0; i < averow; i++)
+		/* If master is the only one available*/
+		if (numworkers == 0)
 		{
-			int* distances = dijkstra(graph, offset + i, v);
-
-			for (j = 0; j < v; j++)
+			printf("Performing %d rows on master offset=%d\n", averow, offset);
+			for (i = 0; i < averow; i++)
 			{
-				distance[offset + i][j] = distances[j];
-			}
+				int* distances = dijkstra(graph, offset + i, v);
 
-			free(distances);
+				for (j = 0; j < v; j++)
+				{
+					distance[offset + i][j] = distances[j];
+				}
+
+				free(distances);
+			}
 		}
 
 		// dont wait for workers who got sent 0 rows
