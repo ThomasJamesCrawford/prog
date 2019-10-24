@@ -54,9 +54,6 @@ int main(int argc, char* argv[])
 		exit(1);
 	}
 
-	/* master task DOES do work */
-	numworkers = numtasks; //-1;
-
 	/**************************** master task ************************************/
 	if (taskid == MASTER)
 	{
@@ -65,6 +62,15 @@ int main(int argc, char* argv[])
 		/* Create the graph */
 		char* filename = argv[argc - 1]; // will always be last arg
 		graph = readGraph(filename, &v);
+
+		if (numworkers > numtasks)
+		{
+			numworkers = v; // don't send workers 0 rows
+		}
+		else 
+		{
+			numworkers = numtasks; // master does work
+		}
 
 		/* Calculate work required for each worker */
 		averow = v / numworkers;
