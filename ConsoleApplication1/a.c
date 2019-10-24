@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 	// must have at least 1 additional arg
 	if (argc < 2)
 	{
-		printf("No input file given.");
+		printf("No input file given. Quitting..\n");
 		MPI_Abort(MPI_COMM_WORLD, 0);
 		exit(1);
 	}
