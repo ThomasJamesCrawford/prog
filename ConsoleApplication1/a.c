@@ -225,8 +225,6 @@ int main(int argc, char* argv[])
 		/* free workers memory - already sent results */
 		freeArr(results);
 		freeArr(graph);
-
-		MPI_Finalize();
 	}
 
 	MPI_Finalize();
