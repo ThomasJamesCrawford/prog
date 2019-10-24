@@ -63,14 +63,7 @@ int main(int argc, char* argv[])
 		char* filename = argv[argc - 1]; // will always be last arg
 		graph = readGraph(filename, &v);
 
-		if (numworkers > numtasks)
-		{
-			numworkers = v; // don't send workers 0 rows
-		}
-		else 
-		{
-			numworkers = numtasks; // master does work
-		}
+		numworkers = numtasks; // master does work
 
 		/* Calculate work required for each worker */
 		averow = v / numworkers;
@@ -126,6 +119,12 @@ int main(int argc, char* argv[])
 			free(distances);
 		}
 
+		// dont wait for workers who got sent 0 rows
+		if (v < numworkers)
+		{
+			numworkers = v;
+		}
+
 		/* Receive results from worker tasks */
 		mtype = FROM_WORKER;
 		for (i = 1; i < numworkers; i++)
@@ -167,9 +166,6 @@ int main(int argc, char* argv[])
 		MPI_Recv(&v, 1, MPI_INT, MASTER, mtype,
 			MPI_COMM_WORLD, &status);
 
-		// allocate graph
-		graph = allocArr(v, v);
-
 		/* Receive index of work completed */
 		MPI_Recv(&offset, 1, MPI_INT, MASTER, mtype,
 			MPI_COMM_WORLD, &status);
@@ -177,6 +173,14 @@ int main(int argc, char* argv[])
 		/* Receive number of tasks to complete */
 		MPI_Recv(&rows, 1, MPI_INT, MASTER,
 			mtype, MPI_COMM_WORLD, &status);
+
+		if (rows <= 0) {
+			// no need to do anything
+			return 0;
+		}
+
+		// allocate graph
+		graph = allocArr(v, v);
 
 		/* Receive the graph */
 		MPI_Recv(&graph[0][0], v * v, MPI_INT, MASTER,
