@@ -69,15 +69,20 @@ int main(int argc, char* argv[])
 		if (numtasks > 1)
 		{
 			numworkers = numtasks - 1;
+
+			/* Calculate work required for each worker */
+			averow = v / numworkers;
+			extra = v % numworkers;
 		}
 		else 
 		{
 			numworkers = 0; // master does work
+			/* Calculate work required for each worker */
+			averow = v;
+			extra = 0;
 		}
 
-		/* Calculate work required for each worker */
-		averow = v / numworkers;
-		extra = v % numworkers;
+
 		offset = 0;
 
 		distance = allocArr(v, v);
