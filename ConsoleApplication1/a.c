@@ -44,17 +44,21 @@ int main(int argc, char* argv[])
 
 	MPI_Status status;
 
+	/* Must be called before all other MPI routine - takes the mpi arguments out of argv*/
 	rc = MPI_Init(&argc, &argv);
 
 	// must have at least 1 additional arg
 	if (argc < 2)
 	{
 		printf("No input file given. Quitting..\n");
+		/* Cancels all mpi processes*/
 		MPI_Abort(MPI_COMM_WORLD, 0);
 		exit(1);
 	}
 
+	/* Gets the ID of the caller */
 	MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
+	/* Gets the total number of processes running */
 	MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 
 	/**************************** master task ************************************/
@@ -101,7 +105,9 @@ int main(int argc, char* argv[])
 			printf("Sending %d rows to task %d offset=%d\n",
 				rows, dest, offset);
 
-			/* Send dimension of graph */
+			/* Send dimension of graph 
+			*	Sends data at location v, count 1, of type int, to worker dest, with tag mtype
+			*/
 			MPI_Send(&v, 1, MPI_INT, dest,
 				mtype, MPI_COMM_WORLD);
 
@@ -153,7 +159,9 @@ int main(int argc, char* argv[])
 		{
 			source = i;
 
-			/* Receive start of work */
+			/* Receive start of work 
+			*	Waits to receive and store 1 int at location &offset if tag is mtype
+			*/
 			MPI_Recv(&offset, 1, MPI_INT, source, mtype,
 				MPI_COMM_WORLD, &status);
 
@@ -248,7 +256,9 @@ int main(int argc, char* argv[])
 		freeArr(graph);
 	}
 
+	/* Finished making MPI calls in this thread */
 	MPI_Finalize();
+	return 0;
 }
 
 /* return index of the minimum in dist thats univisited in visited */
