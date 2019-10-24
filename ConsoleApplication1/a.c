@@ -66,7 +66,14 @@ int main(int argc, char* argv[])
 		char* filename = argv[argc - 1]; // will always be last arg
 		graph = readGraph(filename, &v);
 
-		numworkers = numtasks; // master does work
+		if (numtasks > 1)
+		{
+			numworkers = numtasks - 1;
+		}
+		else 
+		{
+			numworkers = numtasks; // master does work
+		}
 
 		/* Calculate work required for each worker */
 		averow = v / numworkers;
