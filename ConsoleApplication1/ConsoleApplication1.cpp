@@ -288,8 +288,15 @@ int** allocArr(int rows, int cols) {
 */
 void freeArr(int** arr)
 {
-	free(arr[0]);
-	free(arr);
+	if (arr[0])
+	{
+		free(arr[0]);
+	}
+
+	if (arr)
+	{
+		free(arr);
+	}
 }
 
 int** readGraph(char* filename, int* v) 
