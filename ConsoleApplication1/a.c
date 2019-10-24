@@ -48,12 +48,6 @@ int main(int argc, char* argv[])
 	MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
 	MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 
-	if (numtasks < 2) {
-		printf("Need at least two MPI tasks. Quitting...\n");
-		MPI_Abort(MPI_COMM_WORLD, rc);
-		exit(1);
-	}
-
 	/**************************** master task ************************************/
 	if (taskid == MASTER)
 	{
