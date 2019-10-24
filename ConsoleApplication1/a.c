@@ -177,8 +177,10 @@ int main(int argc, char* argv[])
 		MPI_Recv(&rows, 1, MPI_INT, MASTER,
 			mtype, MPI_COMM_WORLD, &status);
 
-		if (rows <= 0) {
+		if (rows <= 0) 
+		{
 			// no need to do anything
+			MPI_Finalize();
 			return 0;
 		}
 
@@ -223,6 +225,8 @@ int main(int argc, char* argv[])
 		/* free workers memory - already sent results */
 		freeArr(results);
 		freeArr(graph);
+
+		MPI_Finalize();
 	}
 
 	MPI_Finalize();
